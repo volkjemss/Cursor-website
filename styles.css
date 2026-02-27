@@ -161,6 +161,10 @@ a {
   background: rgba(10, 17, 31, 0.98);
 }
 
+.mobile-menu[hidden] {
+  display: none;
+}
+
 .mobile-menu a {
   color: #d5e3ff;
 }
