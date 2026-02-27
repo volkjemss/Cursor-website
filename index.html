@@ -37,7 +37,7 @@
           <a href="#faq">FAQ</a>
         </nav>
         <div class="nav-actions">
-          <a class="button button-small" href="#plans">Start Free Access</a>
+          <a class="button button-small" href="#" onclick="openSignup();return false">Start Free Access</a>
           <button
             class="nav-toggle"
             type="button"
@@ -57,7 +57,7 @@
         <a href="#devices">Devices</a>
         <a href="#plans">Plans</a>
         <a href="#faq">FAQ</a>
-        <a class="button button-full" href="#plans">Start Free Access</a>
+        <a class="button button-full" href="#" onclick="openSignup();return false">Start Free Access</a>
       </div>
     </header>
 
@@ -72,7 +72,7 @@
               polished viewing flow that is fast to start and simple to keep.
             </p>
             <div class="hero-cta">
-              <a class="button" href="#plans">Start Free Access</a>
+              <a class="button" href="#" onclick="openSignup();return false">Start Free Access</a>
               <a class="button button-ghost" href="#how-it-works">See How It Works</a>
             </div>
             <ul class="trust-row" aria-label="Trust highlights">
@@ -230,7 +230,7 @@
                 <li>Great for first-time members</li>
                 <li>Flexible month-to-month control</li>
               </ul>
-              <a class="button button-full" href="#">Choose Monthly</a>
+              <a class="button button-full" href="#" onclick="openSignup();return false">Choose Monthly</a>
             </article>
 
             <article class="price-card featured reveal">
@@ -242,7 +242,7 @@
                 <li>Priority onboarding queue</li>
                 <li>Balanced flexibility and savings</li>
               </ul>
-              <a class="button button-full" href="#">Choose Quarterly</a>
+              <a class="button button-full" href="#" onclick="openSignup();return false">Choose Quarterly</a>
             </article>
 
             <article class="price-card reveal">
@@ -254,7 +254,7 @@
                 <li>One payment, year-round access</li>
                 <li>Ideal for committed viewers</li>
               </ul>
-              <a class="button button-full" href="#">Choose Annual</a>
+              <a class="button button-full" href="#" onclick="openSignup();return false">Choose Annual</a>
             </article>
           </div>
           <p class="small-note center reveal">
@@ -319,7 +319,7 @@
           <h2>Ready for smoother streaming nights?</h2>
           <p>Try Danke TV now and see how simple your watch routine can feel.</p>
           <div class="hero-cta cta-center">
-            <a class="button" href="#plans">Start Free Access</a>
+            <a class="button" href="#" onclick="openSignup();return false">Start Free Access</a>
             <a class="button button-ghost" href="#how-it-works">View Setup Steps</a>
           </div>
         </div>
@@ -337,7 +337,51 @@
       </div>
     </footer>
 
-    <a class="mobile-sticky-cta" href="#plans">Start Free Access</a>
+    <a class="mobile-sticky-cta" href="#" onclick="openSignup();return false">Start Free Access</a>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal-overlay" hidden>
+      <div class="modal-card">
+        <button class="modal-close" onclick="closeSignup()" aria-label="Close">&times;</button>
+
+        <!-- Step 1: Email -->
+        <div id="step-email" class="modal-step">
+          <h2>Start Free Access</h2>
+          <p class="modal-sub">Enter your email to get started with Danke TV.</p>
+          <div class="field-group">
+            <input type="email" id="signup-email" placeholder="your@email.com" autocomplete="email" />
+            <p id="email-hint" class="hint" hidden></p>
+          </div>
+          <button class="button button-full" id="btn-check-email" onclick="handleCheckEmail()">Continue</button>
+        </div>
+
+        <!-- Step 2: OTP -->
+        <div id="step-otp" class="modal-step" hidden>
+          <h2>Check your inbox</h2>
+          <p class="modal-sub">We sent a 6-digit code to <strong id="otp-target-email"></strong></p>
+          <div class="field-group">
+            <input type="text" id="signup-otp" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" />
+            <p id="otp-hint" class="hint" hidden></p>
+          </div>
+          <button class="button button-full" id="btn-verify-otp" onclick="handleVerifyOTP()">Verify &amp; Create Account</button>
+          <button class="link-btn" onclick="handleResendOTP()">Didn't receive it? Resend code</button>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="step-success" class="modal-step" hidden>
+          <div class="success-icon">&#10003;</div>
+          <h2>You're all set!</h2>
+          <p class="modal-sub">Your Danke TV account is ready. Credentials sent to your email too.</p>
+          <div class="cred-grid" id="cred-grid"></div>
+          <div class="field-group">
+            <label class="cred-label">Playlist URL</label>
+            <input type="text" id="cred-url" readonly class="cred-url-input" />
+            <button class="link-btn" onclick="copyURL()">Copy URL</button>
+          </div>
+          <button class="button button-full" onclick="closeSignup()">Done</button>
+        </div>
+      </div>
+    </div>
 
     <script>
       const yearEl = document.getElementById("year");
@@ -386,6 +430,174 @@
       } else {
         revealTargets.forEach((el) => el.classList.add("is-visible"));
       }
+
+      // ---- Signup flow ----
+      let signupEmail = "";
+
+      function openSignup() {
+        const modal = document.getElementById("signup-modal");
+        modal.hidden = false;
+        document.body.style.overflow = "hidden";
+        resetModal();
+        document.getElementById("signup-email").focus();
+      }
+
+      function closeSignup() {
+        document.getElementById("signup-modal").hidden = true;
+        document.body.style.overflow = "";
+      }
+
+      function resetModal() {
+        document.getElementById("step-email").hidden = false;
+        document.getElementById("step-otp").hidden = true;
+        document.getElementById("step-success").hidden = true;
+        document.getElementById("signup-email").value = "";
+        document.getElementById("signup-otp").value = "";
+        hideHint("email-hint");
+        hideHint("otp-hint");
+      }
+
+      function showHint(id, msg, isError) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.className = isError ? "hint hint-error" : "hint hint-info";
+        el.hidden = false;
+      }
+
+      function hideHint(id) {
+        document.getElementById(id).hidden = true;
+      }
+
+      function setLoading(btnId, loading) {
+        const btn = document.getElementById(btnId);
+        btn.disabled = loading;
+        if (loading) {
+          btn.dataset.origText = btn.textContent;
+          btn.textContent = "Please wait\u2026";
+        } else {
+          btn.textContent = btn.dataset.origText || btn.textContent;
+        }
+      }
+
+      async function handleCheckEmail() {
+        const email = document.getElementById("signup-email").value.trim();
+        if (!email) { showHint("email-hint", "Please enter your email.", true); return; }
+        hideHint("email-hint");
+        setLoading("btn-check-email", true);
+
+        try {
+          const res = await fetch("/api/check-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await res.json();
+
+          if (!data.ok) { showHint("email-hint", data.message, true); return; }
+          if (data.suggestion) { showHint("email-hint", data.suggestion, false); }
+
+          signupEmail = email;
+
+          const res2 = await fetch("/api/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data2 = await res2.json();
+
+          if (!data2.ok) { showHint("email-hint", data2.message, true); return; }
+
+          document.getElementById("otp-target-email").textContent = email;
+          document.getElementById("step-email").hidden = true;
+          document.getElementById("step-otp").hidden = false;
+          document.getElementById("signup-otp").focus();
+        } catch (err) {
+          showHint("email-hint", "Network error. Please try again.", true);
+        } finally {
+          setLoading("btn-check-email", false);
+        }
+      }
+
+      async function handleVerifyOTP() {
+        const code = document.getElementById("signup-otp").value.trim();
+        if (!code || code.length < 6) { showHint("otp-hint", "Enter the 6-digit code.", true); return; }
+        hideHint("otp-hint");
+        setLoading("btn-verify-otp", true);
+
+        try {
+          const res = await fetch("/api/verify-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: signupEmail, code }),
+          });
+          const data = await res.json();
+          if (!data.ok) { showHint("otp-hint", data.message, true); return; }
+
+          showHint("otp-hint", "Verified! Creating your account\u2026", false);
+
+          const res2 = await fetch("/api/create-account", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: signupEmail }),
+          });
+          const data2 = await res2.json();
+
+          if (!data2.ok) { showHint("otp-hint", data2.message, true); return; }
+
+          showCredentials(data2.account);
+        } catch (err) {
+          showHint("otp-hint", "Network error. Please try again.", true);
+        } finally {
+          setLoading("btn-verify-otp", false);
+        }
+      }
+
+      async function handleResendOTP() {
+        try {
+          const res = await fetch("/api/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: signupEmail }),
+          });
+          const data = await res.json();
+          showHint("otp-hint", data.ok ? "New code sent!" : data.message, !data.ok);
+        } catch {
+          showHint("otp-hint", "Failed to resend. Try again.", true);
+        }
+      }
+
+      function showCredentials(acct) {
+        document.getElementById("step-otp").hidden = true;
+        document.getElementById("step-success").hidden = false;
+
+        const grid = document.getElementById("cred-grid");
+        grid.innerHTML = [
+          ["Username", acct.username],
+          ["Password", acct.password],
+          ["Server", acct.dns],
+          ["Port", acct.port],
+        ].map(([k, v]) => `<div class="cred-item"><span class="cred-key">${k}</span><span class="cred-val">${v}</span></div>`).join("");
+
+        document.getElementById("cred-url").value = acct.url;
+      }
+
+      function copyURL() {
+        const input = document.getElementById("cred-url");
+        navigator.clipboard.writeText(input.value).catch(() => {
+          input.select();
+          document.execCommand("copy");
+        });
+      }
+
+      document.getElementById("signup-email").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleCheckEmail();
+      });
+      document.getElementById("signup-otp").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleVerifyOTP();
+      });
+      document.getElementById("signup-modal").addEventListener("click", (e) => {
+        if (e.target.classList.contains("modal-overlay")) closeSignup();
+      });
     </script>
   </body>
 </html>

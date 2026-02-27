@@ -4,25 +4,33 @@
 
 ### Overview
 
-This is a static HTML/CSS landing page for **Danke TV** (a streaming TV service). There are no build tools, package managers, or backend services. The codebase consists of two files: `index.html` and `styles.css`.
+**Danke TV** landing page with a Node.js/Express backend handling a signup flow: email validation (UserCheck), OTP verification (Resend), and account creation (DRM Cloud API).
 
 ### Running the dev server
 
-Serve the static files with Python's built-in HTTP server:
-
 ```sh
-python3 -m http.server 8080
+npm install
+node server.js
 ```
 
-Then open `http://localhost:8080/` in a browser.
+Server starts on `http://localhost:3000/` (serves static files + API routes).
+
+### Required secrets (environment variables)
+
+| Variable | Purpose |
+|----------|---------|
+| `DRM_API_KEY` | DRM Cloud API for account creation |
+| `RESEND_API_KEY` | Resend for sending OTP and credential emails |
+| `USERCHECK_API_KEY` | UserCheck for disposable email detection |
+| `FROM_EMAIL` | (Optional) Sender email; defaults to `onboarding@resend.dev` |
 
 ### Lint / Test / Build
 
-- **No linter** is configured; the project is vanilla HTML/CSS with no tooling.
-- **No automated tests** exist.
-- **No build step** is needed; files are served directly.
+- No linter or test framework is configured.
+- No build step; `server.js` runs directly with Node.js ESM.
 
 ### Notes
 
-- The site uses CSS custom properties, smooth-scroll anchors, an IntersectionObserver-based reveal animation, and a mobile hamburger menu toggle (all vanilla JS in a `<script>` block at the bottom of `index.html`).
-- There are no dependencies to install, no environment variables, and no secrets required.
+- **Resend test-mode limitation**: `onboarding@resend.dev` can only send to the Resend account owner's email. For production, verify a domain at `resend.com/domains` and set `FROM_EMAIL`.
+- **DRM API**: Called at `http://api.drm-cloud.com/dev_api.php` with `package_id=101`, `template_id=1`, `country=all`, and `note=<user email>`.
+- Frontend is vanilla HTML/CSS/JS in `index.html` and `styles.css`. The signup modal and flow logic are in a `<script>` block at the bottom of `index.html`.
