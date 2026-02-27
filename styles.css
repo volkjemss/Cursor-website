@@ -513,26 +513,67 @@ blockquote:hover {
   color: var(--brand);
 }
 
-.pricing-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+/* ---- Plan selector ---- */
+.plan-selector {
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-/* ---- Plan cards ---- */
-.plan-card {
+.plan-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 1.2rem;
+}
+
+.plan-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.65rem 0.4rem;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.plan-tab small {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.plan-tab:hover {
+  color: var(--text);
+  background: rgba(13, 148, 136, 0.06);
+}
+
+.plan-tab.active {
+  background: var(--teal);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+}
+
+.plan-tab.active small {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.plan-card-single {
   position: relative;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
-  padding: 1.3rem 1.2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.plan-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(13, 148, 136, 0.12);
-  border-color: rgba(13, 148, 136, 0.35);
+  padding: 1.8rem 1.6rem 1.2rem;
+  box-shadow: 0 12px 32px rgba(13, 148, 136, 0.08);
 }
 
 .plan-header {
@@ -545,7 +586,7 @@ blockquote:hover {
 
 .plan-header h3 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.5rem;
 }
 
 .badge-popular {
@@ -608,7 +649,7 @@ blockquote:hover {
 
 .plan-price {
   margin: 0;
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   font-weight: 700;
   color: #0d9488;
 }
@@ -627,9 +668,9 @@ blockquote:hover {
 
 .plan-features {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .pf-item {
@@ -937,10 +978,6 @@ details p {
   .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .pricing-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 860px) {
@@ -960,10 +997,6 @@ details p {
   .steps-grid,
   .quote-grid {
     grid-template-columns: 1fr;
-  }
-
-  .pricing-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -992,9 +1025,13 @@ details p {
   }
 
   .proof-strip,
-  .card-grid,
-  .pricing-grid {
+  .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .plan-tabs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
   }
 
   .footer-wrap {

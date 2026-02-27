@@ -227,67 +227,27 @@
           <h2 class="reveal">Choose your plan</h2>
           <p class="section-intro reveal">12 Months Access &middot; Instant Delivery &middot; 30-day money-back guarantee</p>
 
-          <div class="pricing-grid reveal">
-            <!-- Solo -->
-            <article class="plan-card" data-plan="solo" data-base="45" data-shield="12" data-vision="20">
-              <div class="plan-header">
-                <h3>Solo</h3>
-                <span class="badge-popular">Most Popular</span>
-              </div>
-              <p class="plan-period">12 Months Access</p>
-              <div class="plan-devices">
-                <span class="device-icon" aria-hidden="true">&#9643;</span>
-                <strong>1</strong> Device
-              </div>
-              <div class="plan-price-box">
-                <p class="plan-price">&euro;<span class="price-amount">45</span><span>/year</span></p>
-                <p class="plan-monthly">Just &euro;<span class="monthly-amount">3.75</span>/month</p>
-              </div>
-              <div class="plan-features">
-                <div class="pf-item"><span class="pf-icon">&#128250;</span>25,000+ Live Channels</div>
-                <div class="pf-item"><span class="pf-icon">&#127916;</span>145,000+ Movies</div>
-                <div class="pf-item"><span class="pf-icon">&#128253;</span>44,000+ Series</div>
-                <div class="pf-item"><span class="pf-icon">&#9917;</span>Premium Sports</div>
-                <div class="pf-item"><span class="pf-icon">&#127897;</span>24/7 Support</div>
-                <div class="pf-item"><span class="pf-icon">&#128218;</span>EPG TV Guide</div>
-              </div>
-              <div class="plan-addons">
-                <p class="addon-title">+ Additional Options</p>
-                <label class="addon-row">
-                  <div><strong>Shield+ Proxy</strong><br><small>Bypass ISP blocks</small></div>
-                  <div class="addon-right">
-                    <span class="addon-price">+&euro;12</span>
-                    <input type="checkbox" class="toggle-input addon-shield" />
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </div>
-                </label>
-                <label class="addon-row">
-                  <div><strong>4K Ultra HD</strong><br><small>Crystal clear quality</small></div>
-                  <div class="addon-right">
-                    <span class="addon-price">+&euro;20</span>
-                    <input type="checkbox" class="toggle-input addon-vision" />
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </div>
-                </label>
-              </div>
-              <a class="button button-full plan-cta" href="https://instant-ai-text.com/checkout?plan=solo_basic" target="_blank">Get Started Now &mdash; &euro;<span class="cta-price">45</span></a>
-              <p class="plan-guarantee">30-day money-back guarantee</p>
-            </article>
+          <div class="plan-selector reveal">
+            <div class="plan-tabs" role="tablist">
+              <button class="plan-tab active" data-tab="solo" role="tab" aria-selected="true">Solo<small>1 Device</small></button>
+              <button class="plan-tab" data-tab="duo" role="tab" aria-selected="false">Duo<small>2 Devices</small></button>
+              <button class="plan-tab" data-tab="family" role="tab" aria-selected="false">Family<small>3 Devices</small></button>
+              <button class="plan-tab" data-tab="maxi" role="tab" aria-selected="false">Maxi<small>4 Devices</small></button>
+            </div>
 
-            <!-- Duo -->
-            <article class="plan-card" data-plan="duo" data-base="70" data-shield="20" data-vision="20">
+            <article class="plan-card-single" id="dynamic-plan">
               <div class="plan-header">
-                <h3>Duo</h3>
+                <h3 id="dp-name">Solo</h3>
                 <span class="badge-popular">Most Popular</span>
               </div>
               <p class="plan-period">12 Months Access</p>
               <div class="plan-devices">
-                <span class="device-icon" aria-hidden="true">&#9643;&#9643;</span>
-                <strong>2</strong> Devices
+                <span class="device-icon" id="dp-device-icons" aria-hidden="true">&#9643;</span>
+                <strong id="dp-device-count">1</strong> <span id="dp-device-label">Device</span>
               </div>
               <div class="plan-price-box">
-                <p class="plan-price">&euro;<span class="price-amount">70</span><span>/year</span></p>
-                <p class="plan-monthly">Just &euro;<span class="monthly-amount">5.83</span>/month</p>
+                <p class="plan-price">&euro;<span id="dp-price">45</span><span>/year</span></p>
+                <p class="plan-monthly">Just &euro;<span id="dp-monthly">3.75</span>/month</p>
               </div>
               <div class="plan-features">
                 <div class="pf-item"><span class="pf-icon">&#128250;</span>25,000+ Live Channels</div>
@@ -302,113 +262,21 @@
                 <label class="addon-row">
                   <div><strong>Shield+ Proxy</strong><br><small>Bypass ISP blocks</small></div>
                   <div class="addon-right">
-                    <span class="addon-price">+&euro;20</span>
-                    <input type="checkbox" class="toggle-input addon-shield" />
+                    <span class="addon-price" id="dp-shield-price">+&euro;12</span>
+                    <input type="checkbox" class="toggle-input" id="dp-shield" />
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </div>
                 </label>
                 <label class="addon-row">
                   <div><strong>4K Ultra HD</strong><br><small>Crystal clear quality</small></div>
                   <div class="addon-right">
-                    <span class="addon-price">+&euro;20</span>
-                    <input type="checkbox" class="toggle-input addon-vision" />
+                    <span class="addon-price" id="dp-vision-price">+&euro;20</span>
+                    <input type="checkbox" class="toggle-input" id="dp-vision" />
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                   </div>
                 </label>
               </div>
-              <a class="button button-full plan-cta" href="https://instant-ai-text.com/checkout?plan=duo_basic" target="_blank">Get Started Now &mdash; &euro;<span class="cta-price">70</span></a>
-              <p class="plan-guarantee">30-day money-back guarantee</p>
-            </article>
-
-            <!-- Family -->
-            <article class="plan-card" data-plan="family" data-base="90" data-shield="35" data-vision="35">
-              <div class="plan-header">
-                <h3>Family</h3>
-                <span class="badge-popular">Most Popular</span>
-              </div>
-              <p class="plan-period">12 Months Access</p>
-              <div class="plan-devices">
-                <span class="device-icon" aria-hidden="true">&#9643;&#9643;&#9643;</span>
-                <strong>3</strong> Devices
-              </div>
-              <div class="plan-price-box">
-                <p class="plan-price">&euro;<span class="price-amount">90</span><span>/year</span></p>
-                <p class="plan-monthly">Just &euro;<span class="monthly-amount">7.50</span>/month</p>
-              </div>
-              <div class="plan-features">
-                <div class="pf-item"><span class="pf-icon">&#128250;</span>25,000+ Live Channels</div>
-                <div class="pf-item"><span class="pf-icon">&#127916;</span>145,000+ Movies</div>
-                <div class="pf-item"><span class="pf-icon">&#128253;</span>44,000+ Series</div>
-                <div class="pf-item"><span class="pf-icon">&#9917;</span>Premium Sports</div>
-                <div class="pf-item"><span class="pf-icon">&#127897;</span>24/7 Support</div>
-                <div class="pf-item"><span class="pf-icon">&#128218;</span>EPG TV Guide</div>
-              </div>
-              <div class="plan-addons">
-                <p class="addon-title">+ Additional Options</p>
-                <label class="addon-row">
-                  <div><strong>Shield+ Proxy</strong><br><small>Bypass ISP blocks</small></div>
-                  <div class="addon-right">
-                    <span class="addon-price">+&euro;35</span>
-                    <input type="checkbox" class="toggle-input addon-shield" />
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </div>
-                </label>
-                <label class="addon-row">
-                  <div><strong>4K Ultra HD</strong><br><small>Crystal clear quality</small></div>
-                  <div class="addon-right">
-                    <span class="addon-price">+&euro;35</span>
-                    <input type="checkbox" class="toggle-input addon-vision" />
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </div>
-                </label>
-              </div>
-              <a class="button button-full plan-cta" href="https://instant-ai-text.com/checkout?plan=family_basic" target="_blank">Get Started Now &mdash; &euro;<span class="cta-price">90</span></a>
-              <p class="plan-guarantee">30-day money-back guarantee</p>
-            </article>
-
-            <!-- Maxi -->
-            <article class="plan-card" data-plan="maxi" data-base="120" data-shield="40" data-vision="40">
-              <div class="plan-header">
-                <h3>Maxi</h3>
-                <span class="badge-popular">Most Popular</span>
-              </div>
-              <p class="plan-period">12 Months Access</p>
-              <div class="plan-devices">
-                <span class="device-icon" aria-hidden="true">&#9643;&#9643;&#9643;&#9643;</span>
-                <strong>4</strong> Devices
-              </div>
-              <div class="plan-price-box">
-                <p class="plan-price">&euro;<span class="price-amount">120</span><span>/year</span></p>
-                <p class="plan-monthly">Just &euro;<span class="monthly-amount">10.00</span>/month</p>
-              </div>
-              <div class="plan-features">
-                <div class="pf-item"><span class="pf-icon">&#128250;</span>25,000+ Live Channels</div>
-                <div class="pf-item"><span class="pf-icon">&#127916;</span>145,000+ Movies</div>
-                <div class="pf-item"><span class="pf-icon">&#128253;</span>44,000+ Series</div>
-                <div class="pf-item"><span class="pf-icon">&#9917;</span>Premium Sports</div>
-                <div class="pf-item"><span class="pf-icon">&#127897;</span>24/7 Support</div>
-                <div class="pf-item"><span class="pf-icon">&#128218;</span>EPG TV Guide</div>
-              </div>
-              <div class="plan-addons">
-                <p class="addon-title">+ Additional Options</p>
-                <label class="addon-row">
-                  <div><strong>Shield+ Proxy</strong><br><small>Bypass ISP blocks</small></div>
-                  <div class="addon-right">
-                    <span class="addon-price">+&euro;40</span>
-                    <input type="checkbox" class="toggle-input addon-shield" />
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </div>
-                </label>
-                <label class="addon-row">
-                  <div><strong>4K Ultra HD</strong><br><small>Crystal clear quality</small></div>
-                  <div class="addon-right">
-                    <span class="addon-price">+&euro;40</span>
-                    <input type="checkbox" class="toggle-input addon-vision" />
-                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                  </div>
-                </label>
-              </div>
-              <a class="button button-full plan-cta" href="https://instant-ai-text.com/checkout?plan=maxi_basic" target="_blank">Get Started Now &mdash; &euro;<span class="cta-price">120</span></a>
+              <a class="button button-full plan-cta" id="dp-cta" href="https://instant-ai-text.com/checkout?plan=solo_basic" target="_blank">Get Started Now &mdash; &euro;<span id="dp-cta-price">45</span></a>
               <p class="plan-guarantee">30-day money-back guarantee</p>
             </article>
           </div>
@@ -761,37 +629,69 @@
         if (e.target.classList.contains("modal-overlay")) closeSignup();
       });
 
-      // ---- Plan add-on toggles ----
-      document.querySelectorAll(".plan-card").forEach((card) => {
-        const plan = card.dataset.plan;
-        const base = parseInt(card.dataset.base);
-        const shieldCost = parseInt(card.dataset.shield);
-        const visionCost = parseInt(card.dataset.vision);
-        const shieldBox = card.querySelector(".addon-shield");
-        const visionBox = card.querySelector(".addon-vision");
-        const ctaLink = card.querySelector(".plan-cta");
-        const priceEl = card.querySelector(".price-amount");
-        const monthlyEl = card.querySelector(".monthly-amount");
-        const ctaPriceEl = card.querySelector(".cta-price");
+      // ---- Dynamic plan card ----
+      const PLANS = {
+        solo:   { name: "Solo",   slug: "solo",   devices: 1, base: 45,  shield: 12, vision: 20, icons: "\u25AB" },
+        duo:    { name: "Duo",    slug: "duo",    devices: 2, base: 70,  shield: 20, vision: 20, icons: "\u25AB\u25AB" },
+        family: { name: "Family", slug: "family", devices: 3, base: 90,  shield: 35, vision: 35, icons: "\u25AB\u25AB\u25AB" },
+        maxi:   { name: "Maxi",   slug: "maxi",   devices: 4, base: 120, shield: 40, vision: 40, icons: "\u25AB\u25AB\u25AB\u25AB" },
+      };
 
-        function update() {
-          const s = shieldBox.checked;
-          const v = visionBox.checked;
-          const total = base + (s ? shieldCost : 0) + (v ? visionCost : 0);
-          let variant = "basic";
-          if (s && v) variant = "combo";
-          else if (s) variant = "protectplus";
-          else if (v) variant = "vision";
+      let currentPlan = "solo";
+      const dpName       = document.getElementById("dp-name");
+      const dpIcons      = document.getElementById("dp-device-icons");
+      const dpCount      = document.getElementById("dp-device-count");
+      const dpLabel      = document.getElementById("dp-device-label");
+      const dpPrice      = document.getElementById("dp-price");
+      const dpMonthly    = document.getElementById("dp-monthly");
+      const dpShieldP    = document.getElementById("dp-shield-price");
+      const dpVisionP    = document.getElementById("dp-vision-price");
+      const dpShield     = document.getElementById("dp-shield");
+      const dpVision     = document.getElementById("dp-vision");
+      const dpCta        = document.getElementById("dp-cta");
+      const dpCtaPrice   = document.getElementById("dp-cta-price");
 
-          priceEl.textContent = total;
-          monthlyEl.textContent = (total / 12).toFixed(2);
-          ctaPriceEl.textContent = total;
-          ctaLink.href = "https://instant-ai-text.com/checkout?plan=" + plan + "_" + variant;
-        }
+      function renderPlan() {
+        const p = PLANS[currentPlan];
+        dpName.textContent = p.name;
+        dpIcons.textContent = p.icons;
+        dpCount.textContent = p.devices;
+        dpLabel.textContent = p.devices === 1 ? "Device" : "Devices";
+        dpShieldP.textContent = "+\u20AC" + p.shield;
+        dpVisionP.textContent = "+\u20AC" + p.vision;
+        updatePrice();
+      }
 
-        shieldBox.addEventListener("change", update);
-        visionBox.addEventListener("change", update);
+      function updatePrice() {
+        const p = PLANS[currentPlan];
+        const s = dpShield.checked;
+        const v = dpVision.checked;
+        const total = p.base + (s ? p.shield : 0) + (v ? p.vision : 0);
+        let variant = "basic";
+        if (s && v) variant = "combo";
+        else if (s) variant = "protectplus";
+        else if (v) variant = "vision";
+
+        dpPrice.textContent = total;
+        dpMonthly.textContent = (total / 12).toFixed(2);
+        dpCtaPrice.textContent = total;
+        dpCta.href = "https://instant-ai-text.com/checkout?plan=" + p.slug + "_" + variant;
+      }
+
+      document.querySelectorAll(".plan-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".plan-tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
+          tab.classList.add("active");
+          tab.setAttribute("aria-selected", "true");
+          currentPlan = tab.dataset.tab;
+          dpShield.checked = false;
+          dpVision.checked = false;
+          renderPlan();
+        });
       });
+
+      dpShield.addEventListener("change", updatePrice);
+      dpVision.addEventListener("change", updatePrice);
     </script>
   </body>
 </html>
