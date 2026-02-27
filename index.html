@@ -363,7 +363,9 @@
       }
 
       const revealTargets = document.querySelectorAll(".reveal");
-      if ("IntersectionObserver" in window) {
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if ("IntersectionObserver" in window && !prefersReduced) {
+        document.body.classList.add("motion-enabled");
         const revealObserver = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -373,9 +375,14 @@
               }
             });
           },
-          { threshold: 0.2 }
+          { threshold: 0.16 }
         );
         revealTargets.forEach((el) => revealObserver.observe(el));
+
+        // Fallback: ensure content becomes visible even if observer callbacks are delayed.
+        window.setTimeout(() => {
+          revealTargets.forEach((el) => el.classList.add("is-visible"));
+        }, 1300);
       } else {
         revealTargets.forEach((el) => el.classList.add("is-visible"));
       }
