@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "seo-audit": "node scripts/seo-audit.js"
   },
   "dependencies": {
     "express": "^5.1.0",
