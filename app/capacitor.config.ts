@@ -2,11 +2,8 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'com.xtream.iptvapp',
-  appName: 'Xtream IPTV',
+  appName: 'SUPA SERVICE',
   webDir: 'dist',
-  server: {
-    androidScheme: 'https',
-  },
 }
 
 export default config

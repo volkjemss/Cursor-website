@@ -1,57 +1,67 @@
-# Xtream IPTV App (React + Capacitor)
+# SUPA SERVICE IPTV App (React + Capacitor)
 
-Simple IPTV app that connects to Xtream Codes compatible providers, loads live categories/channels, and plays streams in-app.
+IPTV Android app with:
+- direct Xtream login
+- free-trial flow (email -> OTP -> 24h trial credentials)
+- local offer notifications during trial
 
-## Features
+## Key features
 
-- Login with Xtream server URL + username + password
-- Fetch live categories (`get_live_categories`)
-- Fetch channels by category (`get_live_streams`)
-- In-app channel playback (HLS.js fallback + native video support)
-- Android packaging support with Capacitor
+- **Branding**: app renamed to `SUPA SERVICE`
+- **HTTP IPTV URLs supported on Android** (`usesCleartextTraffic=true`)
+- **Existing account login** (server URL, username, password)
+- **Free trial flow**
+  - user enters email
+  - backend validates email through UserCheck API
+  - backend sends OTP through Resend
+  - user verifies OTP
+  - backend creates 24h Xtream trial credentials
+- **One trial limit** per email and per device (enforced by backend)
+- **Offer notifications** scheduled during active trial
 
-## Run locally
+## Environment variables
+
+Copy `.env.example` to `.env`:
+
+- `VITE_TRIAL_API_BASE_URL=http://localhost:8787` (or your hosted trial API)
+
+## Local development
 
 1. Install dependencies:
    - `npm install`
-2. Start development server:
+2. (optional) Start demo Xtream API:
+   - `npm run mock:xtream`
+3. Start trial backend:
+   - `npm run trial:api`
+4. Start app:
    - `npm run dev`
-3. Open URL shown by Vite (usually `http://localhost:5173`).
 
-### Optional mock Xtream server (for testing)
+## Trial backend (`trial-api/server.mjs`)
 
-If you do not have provider credentials yet, run:
+Endpoints:
+- `POST /api/trial/status`
+- `POST /api/trial/request-otp`
+- `POST /api/trial/verify-otp`
+- `POST /api/trial/create`
 
-- `node scripts/mock-xtream-server.mjs`
+Required env vars for production:
+- `USERCHECK_API_KEY`
+- `RESEND_API_KEY`
+- `RESEND_FROM`
+- `TRIAL_XTREAM_SERVER`
+- `TRIAL_DURATION_HOURS` (default `24`)
+- `APP_JWT_SECRET`
 
-Then log in from the app with:
-
-- Server URL: `http://localhost:8090`
-- Username: `demo`
-- Password: `demo`
-
-## Build web app
-
-- `npm run build`
-- `npm run preview`
-- Optional mock API for local testing:
-  - `npm run mock:xtream`
-  - Login with `http://localhost:8090`, username `demo`, password `demo`
+Notes:
+- without `USERCHECK_API_KEY`, email check uses dev fallback (allow)
+- without `RESEND_API_KEY` + `RESEND_FROM`, OTP logs to server console (dev fallback)
+- replace `buildTrialCredentials()` with your real credential provisioning API call
 
 ## Android APK workflow
 
-The project already includes `capacitor.config.ts`.
-
-1. Build and sync web assets:
+1. Build web and sync:
    - `npm run apk:build`
-2. If this is the first Android setup:
-   - `npm run cap:add:android`
-3. Open Android Studio project:
-   - `npm run android:open`
-4. In Android Studio:
-   - `Build > Build Bundle(s) / APK(s) > Build APK(s)`
-
-## Notes
-
-- Some Xtream providers use non-HLS transport streams (`.ts`) that may not play in all browsers. The APK build is generally more reliable on real devices.
-- Credentials are saved in local storage for convenience.
+2. Build debug APK:
+   - `cd android && ./gradlew assembleDebug`
+3. APK output:
+   - `android/app/build/outputs/apk/debug/app-debug.apk`

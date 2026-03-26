@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import './App.css'
 import {
@@ -13,13 +13,18 @@ import {
   saveProfile,
 } from './lib/xtream'
 import { VideoPlayer } from './components/VideoPlayer'
-
-const DEMO_HINT_SERVER = 'http://127.0.0.1:4010'
-const DEMO_HINT_USERNAME = 'demo'
-const DEMO_HINT_PASSWORD = 'demo'
+import {
+  checkTrialEligibility,
+  createTrial,
+  getTrialSession,
+  requestOtp,
+  verifyOtp,
+} from './lib/trial'
+import { scheduleTrialOfferNotifications } from './lib/offers'
 
 function App() {
   const savedProfile = getProfile()
+  const savedTrial = getTrialSession()
   const [serverUrl, setServerUrl] = useState(savedProfile?.serverUrl ?? '')
   const [username, setUsername] = useState(savedProfile?.username ?? '')
   const [password, setPassword] = useState(savedProfile?.password ?? '')
@@ -33,6 +38,25 @@ function App() {
   const [streamError, setStreamError] = useState<string | null>(null)
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [isLoadingStreams, setIsLoadingStreams] = useState(false)
+  const [activeMode, setActiveMode] = useState<'trial' | 'direct'>('trial')
+  const [trialEmail, setTrialEmail] = useState('')
+  const [trialOtp, setTrialOtp] = useState('')
+  const [trialError, setTrialError] = useState<string | null>(null)
+  const [trialMessage, setTrialMessage] = useState<string | null>(
+    savedTrial
+      ? `Trial active until ${new Date(savedTrial.expiresAt).toLocaleString()}`
+      : null,
+  )
+  const [isTrialLoading, setIsTrialLoading] = useState(false)
+  const [otpSent, setOtpSent] = useState(false)
+
+  useEffect(() => {
+    const trial = getTrialSession()
+    if (!trial) {
+      return
+    }
+    void scheduleTrialOfferNotifications(trial.expiresAt)
+  }, [])
 
   const playableUrl = useMemo(() => {
     if (!credentials || !selectedStream) {
@@ -124,56 +148,176 @@ function App() {
     await fetchStreams(credentials, categoryId)
   }
 
+  const connectWithCredentials = async (session: XtreamCredentials) => {
+    const liveCategories = await getLiveCategories(session)
+    const nextCategoryId = liveCategories[0]?.category_id ?? null
+
+    setCredentials(session)
+    setCategories(liveCategories)
+    setSelectedCategoryId(nextCategoryId)
+    saveProfile(session)
+    await fetchStreams(session, nextCategoryId)
+  }
+
+  const onStartTrial = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setTrialError(null)
+    setTrialMessage(null)
+    setIsTrialLoading(true)
+
+    try {
+      const normalizedEmail = trialEmail.trim().toLowerCase()
+      if (!normalizedEmail) {
+        throw new Error('Email is required for trial access.')
+      }
+
+      const eligibility = await checkTrialEligibility(normalizedEmail)
+      if (!eligibility.canStartTrial) {
+        throw new Error(eligibility.reason ?? 'Trial not available.')
+      }
+
+      await requestOtp(normalizedEmail)
+      setOtpSent(true)
+      setTrialMessage('OTP sent to your email.')
+    } catch (error) {
+      setTrialError(error instanceof Error ? error.message : 'Trial start failed.')
+    } finally {
+      setIsTrialLoading(false)
+    }
+  }
+
+  const onVerifyOtpAndStart = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setTrialError(null)
+    setTrialMessage(null)
+    setIsTrialLoading(true)
+
+    try {
+      const normalizedEmail = trialEmail.trim().toLowerCase()
+      await verifyOtp(normalizedEmail, trialOtp.trim())
+      const trialPayload = await createTrial(normalizedEmail)
+      await connectWithCredentials(trialPayload.credentials)
+      setTrialMessage(
+        `Trial activated until ${new Date(trialPayload.expiresAt).toLocaleString()}.`,
+      )
+      setOtpSent(false)
+      setTrialOtp('')
+    } catch (error) {
+      setTrialError(
+        error instanceof Error ? error.message : 'OTP verification failed.',
+      )
+    } finally {
+      setIsTrialLoading(false)
+    }
+  }
+
   return (
     <main className="layout">
       <aside className="sidebar">
-        <h1>Xtream IPTV App</h1>
+        <h1>SUPA SERVICE</h1>
         <p className="subtitle">
-          Log in with Xtream Codes credentials and play live channels.
-        </p>
-        <p className="hint">
-          For local demo: {DEMO_HINT_SERVER} / {DEMO_HINT_USERNAME} /{' '}
-          {DEMO_HINT_PASSWORD}
+          IPTV app for trial users and full Xtream login.
         </p>
 
-        <form className="login-form" onSubmit={onLogin}>
-          <label>
-            Server URL
-            <input
-              type="text"
-              value={serverUrl}
-              onChange={(event) => setServerUrl(event.target.value)}
-              placeholder="http://your-server:port"
-              autoComplete="url"
-              required
-            />
-          </label>
-          <label>
-            Username
-            <input
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              autoComplete="username"
-              required
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-              required
-            />
-          </label>
-          <button type="submit" disabled={isAuthenticating}>
-            {isAuthenticating ? 'Connecting...' : 'Connect'}
+        <div className="mode-toggle">
+          <button
+            type="button"
+            className={activeMode === 'trial' ? 'active' : ''}
+            onClick={() => setActiveMode('trial')}
+          >
+            Free Trial
           </button>
-        </form>
+          <button
+            type="button"
+            className={activeMode === 'direct' ? 'active' : ''}
+            onClick={() => setActiveMode('direct')}
+          >
+            Existing Account
+          </button>
+        </div>
+
+        {activeMode === 'trial' && (
+          <>
+            <form className="login-form" onSubmit={onStartTrial}>
+              <label>
+                Email address
+                <input
+                  type="email"
+                  value={trialEmail}
+                  onChange={(event) => setTrialEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                />
+              </label>
+              <button type="submit" disabled={isTrialLoading}>
+                {isTrialLoading ? 'Please wait...' : 'Send OTP'}
+              </button>
+            </form>
+
+            {otpSent && (
+              <form className="login-form otp-form" onSubmit={onVerifyOtpAndStart}>
+                <label>
+                  OTP code
+                  <input
+                    type="text"
+                    value={trialOtp}
+                    onChange={(event) => setTrialOtp(event.target.value)}
+                    placeholder="Enter 6-digit code"
+                    inputMode="numeric"
+                    required
+                  />
+                </label>
+                <button type="submit" disabled={isTrialLoading}>
+                  {isTrialLoading ? 'Activating...' : 'Activate 24h Trial'}
+                </button>
+              </form>
+            )}
+          </>
+        )}
+
+        {activeMode === 'direct' && (
+          <form className="login-form" onSubmit={onLogin}>
+            <label>
+              Server URL
+              <input
+                type="text"
+                value={serverUrl}
+                onChange={(event) => setServerUrl(event.target.value)}
+                placeholder="http://your-server:port"
+                autoComplete="url"
+                required
+              />
+            </label>
+            <label>
+              Username
+              <input
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                autoComplete="username"
+                required
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </label>
+            <button type="submit" disabled={isAuthenticating}>
+              {isAuthenticating ? 'Connecting...' : 'Connect'}
+            </button>
+          </form>
+        )}
 
         {loginError && <p className="error">{loginError}</p>}
+        {trialError && <p className="error">{trialError}</p>}
+        {trialMessage && <p className="hint">{trialMessage}</p>}
 
         <section className="categories">
           <h2>Live Categories</h2>

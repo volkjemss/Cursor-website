@@ -1,15 +1,17 @@
 {
-  "name": "xtream-iptv-app",
+  "name": "supa-service-iptv-app",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "npm run trial:api & npm run mock:xtream & npm run dev -- --host 0.0.0.0 --port 4173",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "mock:xtream": "node scripts/mock-xtream-server.mjs",
-    "cap:init": "cap init \"Xtream IPTV\" \"com.xtream.iptvapp\" --web-dir=dist",
+    "trial:api": "node trial-api/server.mjs",
+    "cap:init": "cap init \"SUPA SERVICE\" \"com.xtream.iptvapp\" --web-dir=dist",
     "cap:add:android": "cap add android",
     "cap:sync": "cap sync android",
     "android:open": "cap open android",
@@ -18,9 +20,14 @@
   "dependencies": {
     "@capacitor/android": "^8.3.0",
     "@capacitor/core": "^8.3.0",
+    "@capacitor/device": "^8.0.2",
+    "@capacitor/local-notifications": "^8.0.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "hls.js": "^1.6.15",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "resend": "^6.9.4"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.3.0",
