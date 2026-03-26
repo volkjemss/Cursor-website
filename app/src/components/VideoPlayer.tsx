@@ -16,8 +16,6 @@ export function VideoPlayer({ streamUrl, streamName }: VideoPlayerProps) {
       return
     }
 
-    setPlayerError(null)
-
     if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
       videoElement.src = streamUrl
       void videoElement.play().catch(() => {
